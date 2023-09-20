@@ -38,8 +38,7 @@ const { Client } = require("pg");
 client.query(query, function (err, result)
  { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+ else res.send(result.rows);
 });
 });
 
@@ -53,7 +52,7 @@ client.query(query, values, function (err, result) {
     res.status(400).send(err);
     }
     //console.log(result);
-    res.send(`${result.rowCount} insertion successful`);
+   else res.send(`${result.rowCount} insertion successful`);
     });
     
     });
@@ -61,12 +60,22 @@ client.query(query, values, function (err, result) {
     //products-------------------------------->
     app.get("/products", function (req, res, next) 
     { //console.log("Inside /users get api");
-    const query = `SELECT * FROM products`;
+    const query = `SELECT * FROM products `;
 client.query(query, function (err, result)
  { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
+});
+});
+app.get("/products/:id", function (req, res, next) 
+{ //console.log("Inside /users get api");
+    let id=req.params.id;
+    let values=[id]
+const query = `SELECT * FROM products WHERE productId=$1`;
+client.query(query, values,function (err, result)
+{ if (err) 
+{ res.status(400).send(err);}
+else res.send(result.rows);
 });
 });
 
@@ -80,7 +89,7 @@ client.query(query, values, function (err, result) {
     res.status(400).send(err);
     }
     //console.log(result);
-    res.send(`${result.rowCount} insertion successful`);
+    else res.send(`${result.rowCount} insertion successful`);
     });
     });
 
@@ -91,11 +100,11 @@ client.query(query, values, function (err, result) {
    let cat= req.body.category;
    let desc=req.body.description;
   let values= [cat,desc,userId]
-const query =`UPDATE products SET category=$1,description=$2 WHERE id= $3`;
+const query =`UPDATE products SET category=$1,description=$2 WHERE productId= $3`;
 client.query(query, values, function (err, result)
  { if (err) {res.status(400).send(err);}
 
-res.send(`${result.rowCount} updation successful`);
+else res.send(`${result.rowCount} updation successful`);
 });
 });
 /// purchases----------------------------------------------------->
@@ -105,8 +114,7 @@ const query = `SELECT * FROM purchases`;
 client.query(query, function (err, result)
 { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
 });
 });
 app.get("/purchases/shops/:id", function (req, res, next) 
@@ -117,8 +125,7 @@ const query = `SELECT * FROM purchases WHERE shopId=$1`;
 client.query(query,values, function (err, result)
 { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
 });
 });
 app.get("/purchases/products/:id", function (req, res, next) 
@@ -129,8 +136,7 @@ const query = `SELECT * FROM purchases WHERE productid=$1`;
 client.query(query,values, function (err, result)
 { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
 });
 });
 
@@ -143,8 +149,7 @@ const query = `SELECT productid,COUNT(purchaseId) AS totalPurchase FROM purchase
 client.query(query,values, function (err, result)
 { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
 });
 });
 app.get("/totalPurchase/product/:id", function (req, res, next) 
@@ -155,8 +160,7 @@ const query = `SELECT shopId,COUNT(purchaseId) AS totalPurchase FROM purchases W
 client.query(query,values, function (err, result)
 { if (err) 
 { res.status(400).send(err);}
-res.send(result.rows);
-client.end();
+else res.send(result.rows);
 });
 });
 app.post("/purchases", function (req, res, next)
@@ -172,3 +176,13 @@ client.query(query, values, function (err, result) {
     res.send(`${result.rowCount} insertion successful`);
     });
     });
+
+    //---------------------------------------------
+    app.get("/users", function (req, res, next) 
+    { console.log("Inside /users get api");
+   const query = ` SELECT * FROM users`; 
+   client.query(query, function (err, result) 
+   { if (err) { res.status(400).send(err);}
+   else res.send(result.rows);
+   });
+   });
